@@ -10,48 +10,17 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-//    public function userRegister(Request $request) {
-//        $rules = [
-//            'name' => 'required',
-//            'email' => 'required|email',
-//            'password' => 'required',
-//            'c_password' => 'required|same:password',
-//            'roles' => 'required|array'
-//        ];
-//        $validator = Validator::make($request->all(), $rules);
-//
-//        if ($validator->fails()) {
-//            return response()->json(['error' => $validator->errors()], 401);
-//        }
-//        $userData = $request->only([
-//            'name',
-//            'email',
-//            'password'
-//        ]);
-//
-//        $user = User::query()->create($userData);
-//
-//        $roles = $request->get('roles');
-//        foreach ($roles as $role) {
-//            $user->assignRole($role);
-//        }
-//        return response()->json(['data' => $user], 200);
-//    }
-
-
-//    public function userByRole($role_id) {
-//        $users = User::role($role_id)->get();
-//        return response()->json(['data', $users], 200);
-//    }
-
     /**
      * Display a listing of the resource.
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('roles')->get();
+
+        $users = User::query()->whereHas('roles', function ($item) use($request) {
+            $item->where('id', $request->role_id);
+        })->get();
         return response()->json(['data', $users], 200);
     }
 
@@ -109,7 +78,6 @@ class UserController extends Controller
         $updateUser = User::query()->find($id);
         $updateUser->name =$request->get('name');
         $updateUser->email =$request->get('email');
-        $updateUser->password =$request->get('password');
         $roles = $request->get('roles');
         $updateUser->syncRoles($roles);
         $updateUser->save();
