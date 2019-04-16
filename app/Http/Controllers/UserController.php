@@ -17,10 +17,14 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-
-        $users = User::query()->whereHas('roles', function ($item) use($request) {
+        $roleId = $request->input('role_id');
+        if($roleId) {
+            $users = User::with('roles')->whereHas('roles', function ($item) use($request) {
             $item->where('id', $request->role_id);
         })->get();
+        } else {
+            $users = User::with('roles')->get();
+        }
         return response()->json(['data', $users], 200);
     }
 

@@ -14,8 +14,8 @@ class ClientController extends Controller
      */
     public function index()
     {
-        $clients = Client::query()->get();
-        return response()->json(['data', $clients], 200);
+        $pageSize = Client::query()->get('pageSize');
+        return response()->json(['data', Client::query()->paginate($pageSize)], 200);
     }
 
     /**
