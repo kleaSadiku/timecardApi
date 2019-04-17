@@ -3,29 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return Response
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
-        $roleId = $request->input('role_id');
-        if($roleId) {
-            $users = User::with('roles')->whereHas('roles', function ($item) use($request) {
-            $item->where('id', $request->role_id);
-        })->get();
-        } else {
-            $users = User::with('roles')->get();
+        $users = User::with('roles');
+        if($roleId = $request->get('role_id')) {
+            $users = $users->whereHas('roles', function ($item) use ($request) {
+                $item->where('id', $request->role_id);
+            });
         }
-        return response()->json(['data', $users], 200);
+        return response()->json(['data', $users->paginate()], 200);
     }
 
     /**

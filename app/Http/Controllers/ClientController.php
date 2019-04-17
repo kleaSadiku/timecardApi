@@ -12,20 +12,10 @@ class ClientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $pageSize = Client::query()->get('pageSize');
+        $pageSize = $request->get('pageSize');
         return response()->json(['data', Client::query()->paginate($pageSize)], 200);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -36,7 +26,14 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $client = Client::query()->create([
+            'name' => $request->get('name'),
+            'description' => $request->get('description'),
+            'email' => $request->get('email'),
+            'phone' => $request->get('phone'),
+            'nipt' => $request->get('nipt'),
+        ]);
+        return response()->json(['data' => $client], 200);
     }
 
     /**
@@ -47,19 +44,10 @@ class ClientController extends Controller
      */
     public function show($id)
     {
-        //
+       $client = Client::query()->find($id);
+       return response()->json(['data', $client], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -70,7 +58,15 @@ class ClientController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $updateClient = Client::query()->find($id);
+        $updateClient->name =$request->get('name');
+        $updateClient->description= $request->get('description');
+        $updateClient->email= $request->get('email');
+        $updateClient->phone= $request->get('phone');
+        $updateClient->nipt= $request->get('nipt');
+        $updateClient->save();
+        return $updateClient;
+
     }
 
     /**
@@ -81,6 +77,7 @@ class ClientController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Client::query()->find($id)->delete();
+        return [];
     }
 }
