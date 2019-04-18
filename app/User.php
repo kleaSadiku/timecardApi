@@ -6,6 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
+use phpDocumentor\Reflection\Project;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -43,7 +44,11 @@ class User extends Authenticatable
 
     public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = bcrypt($value);
+        return $this->attributes['password'] = bcrypt($value);
+    }
+
+    public function project(){
+        return $this->hasMany(Project::class);
     }
 
 }

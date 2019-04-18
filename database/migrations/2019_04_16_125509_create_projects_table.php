@@ -21,10 +21,8 @@ class CreateProjectsTable extends Migration
             $table->date('from');
             $table->date('to');
             $table->unsignedBigInteger('client_id');
-            $table->unsignedBigInteger('user_id');
             $table->timestamps();
             $table->foreign('client_id')->references('id')->on('clients');
-            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
